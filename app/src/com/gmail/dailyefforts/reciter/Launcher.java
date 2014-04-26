@@ -73,10 +73,13 @@ public class Launcher extends ListActivity implements OnClickListener {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = getLayoutInflater().inflate(R.layout.book_list_item, null);
-			TextView tv = (TextView) view.findViewById(R.id.tv_bookname);
+			if (convertView == null) {
+				convertView = getLayoutInflater().inflate(
+						R.layout.book_list_item, null);
+			}
+			TextView tv = (TextView) convertView.findViewById(R.id.tv_bookname);
 			tv.setText(mBooks[position]);
-			return view;
+			return convertView;
 		}
 
 	}
