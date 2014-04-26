@@ -12,32 +12,29 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import com.gmail.dailyefforts.reciter.R;
 import com.gmail.dailyefforts.reciter.db.DBA;
 import com.gmail.dailyefforts.reciter.setting.SettingsActivity;
 
 public class Launcher extends ListActivity implements OnClickListener {
+	private static final String TAG = Launcher.class.getSimpleName();
 
 	private Button mBtnExit;
 	private Button mBtnSettings;
 
-	private static final String TAG = Launcher.class.getSimpleName();
 	private SharedPreferences mSharedPref;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_book_list);
-		String[] books = getResources().getStringArray(R.array.books);
 
-		ListAdapter adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, books);
-		setListAdapter(adapter);
+		setListAdapter(new BookListAdapter());
 
 		findViewsAndSetListeners();
 		mSharedPref = PreferenceManager
@@ -49,6 +46,39 @@ public class Launcher extends ListActivity implements OnClickListener {
 		}
 		Config.IS_RUNNING = true;
 		setReviewAlarm();
+	}
+
+	class BookListAdapter extends BaseAdapter {
+		String[] mBooks;
+
+		public BookListAdapter() {
+			mBooks = getResources().getStringArray(R.array.books);
+			assert (mBooks != null);
+		}
+
+		@Override
+		public int getCount() {
+			return mBooks.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return mBooks[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = getLayoutInflater().inflate(R.layout.book_list_item, null);
+			TextView tv = (TextView) view.findViewById(R.id.tv_bookname);
+			tv.setText(mBooks[position]);
+			return view;
+		}
+
 	}
 
 	@Override
